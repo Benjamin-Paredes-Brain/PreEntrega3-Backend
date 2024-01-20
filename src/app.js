@@ -15,6 +15,8 @@ import { router as cartsRouter } from "./routes/carts.router.js"
 import { router as viewsRouter } from "./routes/views.router.js"
 import { router as userRouter } from "./routes/user.router.js";
 import { router as ticketsRouter } from "./routes/tickets.router.js"
+import { router as mockRouter } from "../src/routes/mocking.router.js"
+
 
 const { PORT, MongoURL, MongoSecret } = config
 const app = express()
@@ -64,6 +66,7 @@ app.use("/api/products", producstRouter)
 app.use("/api/carts", cartsRouter)
 app.use("/api/sessions", userRouter)
 app.use("/api/tickets", ticketsRouter)
+app.use(mockRouter)
 app.use(viewsRouter)
 
 app.get("/", (req, res) => {

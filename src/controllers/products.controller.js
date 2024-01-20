@@ -1,4 +1,5 @@
 import Products from "../dao/classes/products.dao.js"
+import { getPrevLink, getNextLink } from "../utils.js"
 const productsService = new Products()
 
 export const getProducts = async (req, res) => {
@@ -32,14 +33,6 @@ export const getProducts = async (req, res) => {
         if (!result) return res.status(404).send("Cannot get products")
 
         const baseUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-
-        function getPrevLink(baseUrl, result) {
-            return baseUrl.replace(`page=${result.page}`, `page=${result.prevPage}`);
-        }
-
-        function getNextLink(baseUrl, result) {
-            return baseUrl.includes('page') ? baseUrl.replace(`page=${result.page}`, `page=${result.nextPage}`) : baseUrl.concat(`?page=${result.nextPage}`);
-        }
 
         return {
             status: "success",
