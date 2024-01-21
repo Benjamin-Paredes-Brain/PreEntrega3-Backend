@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser"
 import { MessageModel } from "./dao/models/messages.model.js";
 import { Server } from "socket.io"
 import { initializedPassport } from "./config/passport.config.js";
+import errorMiddleware from "./middlewares/error/error.middleware.js";
 
 import { router as producstRouter } from "./routes/products.router.js"
 import { router as cartsRouter } from "./routes/carts.router.js"
@@ -68,6 +69,8 @@ app.use("/api/sessions", userRouter)
 app.use("/api/tickets", ticketsRouter)
 app.use(mockRouter)
 app.use(viewsRouter)
+app.use(errorMiddleware)
+
 
 app.get("/", (req, res) => {
   res.send("PreEntrega3")

@@ -1,5 +1,11 @@
 import Products from "../dao/classes/products.dao.js"
 import { getPrevLink, getNextLink } from "../utils.js"
+
+import { createProductErrorInfo } from "../services/error/info.js"
+import CustomError from "../services/error/CustomError.js"
+import EErrors from "../services/error/enums.js"
+
+
 const productsService = new Products()
 
 export const getProducts = async (req, res) => {
@@ -60,17 +66,19 @@ export const getProductsById = async (req, res) => {
 }
 
 export const createProducts = async (req, res) => {
-    try {
-        let { title, description, price, thumbnail, code, stock, category } = req.body
-        if (!title || !description || !price || !thumbnail || !code || !stock || !category) return res.status(400).send({ status: "error", error: "Incomplete values" })
+    let { title, description, price, thumbnail, code, stock, category } = req.body
+    if (!title || !description || !price || !thumbnail || !code || !stock || !category) {
+        CustomError.createError({
+            name: "Product creation Error",
+            cause: createProductErrorInfo({ title, description, price, thumbnail, code, stock, category }),
+            message: "Error trying to create product",
+            code: EErrors.INVALID_TYPES_ERROR
+        })
+    }
 
-        let result = await productsService.createProducts(title, description, price, thumbnail, code, stock, category)
-        if (!result) return res.status(404).send("Cannot create products")
-        res.send({ status: "success", payload: result })
-    }
-    catch (err) {
-        res.status(500).send("Server error " + err)
-    }
+    let result = await productsService.createProducts(title, description, price, thumbnail, code, stock, category)
+    if (!result) return res.status(404).send("Cannot create products")
+    res.send({ status: "success", payload: result })
 }
 
 export const updateProducts = async (req, res) => {
