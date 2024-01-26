@@ -10,6 +10,7 @@ import { MessageModel } from "./dao/models/messages.model.js";
 import { Server } from "socket.io"
 import { initializedPassport } from "./config/passport.config.js";
 import errorMiddleware from "./middlewares/error/error.middleware.js";
+import { middlewareLogger } from "./middlewares/logger/logger.middleware.js";
 
 import { router as producstRouter } from "./routes/products.router.js"
 import { router as cartsRouter } from "./routes/carts.router.js"
@@ -17,6 +18,7 @@ import { router as viewsRouter } from "./routes/views.router.js"
 import { router as userRouter } from "./routes/user.router.js";
 import { router as ticketsRouter } from "./routes/tickets.router.js"
 import { router as mockRouter } from "../src/routes/mocking.router.js"
+import { router as loggerRouter } from "./routes/logger.router.js";
 
 
 const { PORT, MongoURL, MongoSecret } = config
@@ -39,6 +41,9 @@ app.engine("handlebars", handlebars.engine({
 }))
 app.set("views", process.cwd() + "/src/views")
 app.set("view engine", "handlebars")
+
+app.use(errorMiddleware)
+app.use(middlewareLogger)
 
 mongoose.connect(MongoURL)
   .then(() => {
@@ -68,9 +73,8 @@ app.use("/api/carts", cartsRouter)
 app.use("/api/sessions", userRouter)
 app.use("/api/tickets", ticketsRouter)
 app.use(mockRouter)
+app.use(loggerRouter)
 app.use(viewsRouter)
-app.use(errorMiddleware)
-
 
 app.get("/", (req, res) => {
   res.send("PreEntrega3")

@@ -21,7 +21,7 @@ export const initializedPassport = () => {
             try {
                 const user = await userModel.findOne({ email: username });
                 if (user) {
-                    console.log("user already exists")
+                    req.logger.error("user already exists")
                     return done(null, false)
                 }
                 const newUserDTO = new UserDTO({
@@ -56,7 +56,7 @@ export const initializedPassport = () => {
 
             try {
                 const user = await userModel.findOne({ email: email });
-                console.log(' User login ' + user)
+                req.logger.info(' User login ' + user)
                 if (!user) {
                     return done(null, false)
                 }
@@ -76,9 +76,9 @@ export const initializedPassport = () => {
         clientID: GithubClientId,
         clientSecret: GithubClientSecret,
         callbackURL: "http://localhost:8080/api/sessions/githubcallback",
-    }, async (accesToken, refreshToken, profile, done) => {
+    }, async (req, accesToken, refreshToken, profile, done) => {
         try {
-            console.log(profile);
+            req.logger.info(profile);
             let user = await userModel.findOne({ email: profile._json.email })
             if (!user) {
                 const newUserDTO = new UserDTO({
