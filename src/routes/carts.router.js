@@ -16,12 +16,13 @@ router.get("/:cid", async (req, res) => {
 
 router.put("/:cid", updateCarts)
 router.put("/:cid/products/:pid", updateQuantityProductsInCarts)
+router.put("/products/:cid", deleteAllProductsinCarts)
+
 
 router.post("/", createCarts)
 router.post("/:cid/products/:pid",  checkRole(['user']), addProductToCarts)
 
 router.delete("/delete/:cid", deleteCarts)
 router.delete("/:cid/products/:pid", deleteProductInCarts)
-router.delete("/:cid", deleteAllProductsinCarts)
 
 router.post("/:cid/purchase", purchaseCart);

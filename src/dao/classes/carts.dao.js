@@ -104,14 +104,20 @@ export default class Carts {
 
   deleteAllProductsinCarts = async (cid) => {
     try {
-      let result = await cartsModel.findByIdAndDelete(cid);
-      this.logger.info(`All products deleted from cart with ID ${cid}`);
-      return result;
+        let result = await cartsModel.findByIdAndUpdate(
+            cid,
+            { $set: { products: [] } },
+            { new: true }
+        );
+        this.logger.info(`All products deleted from cart with ID ${cid}`);
+        return result;
     } catch (error) {
-      this.logger.error(`Error while deleting all products from cart with ID ${cid}: ${error.message}`);
-      return null;
+        this.logger.error(`Error while deleting all products from cart with ID ${cid}: ${error.message}`);
+        return null;
     }
-  }
+}
+
+
 
   updateQuantityProductsInCarts = async (cid, pid, quantity) => {
     try {

@@ -136,21 +136,19 @@ export const deleteAllProductsinCarts = async (req, res) => {
     try {
         const cid = req.params.cid;
 
-        const cart = await cartsService.deleteAllProductsinCarts(cid);
+        const result = await cartsService.deleteAllProductsinCarts(cid);
 
-        if (!cart) {
+        if (!result) {
             return res.status(404).send("Cart not found");
         }
 
-        cart.products = [];
-
-        const result = await cart.save();
-        if (!result) return res.status(404).send("Cannot delete products in cart")
         res.send({ status: "success", payload: result });
     } catch (err) {
-        res.status(500).send("Server Error: " + err);
+        console.error("Error:", err);
+        res.status(500).send("Server Error: " + err.message);
     }
 };
+
 
 export const updateQuantityProductsInCarts = async (req, res) => {
     try {

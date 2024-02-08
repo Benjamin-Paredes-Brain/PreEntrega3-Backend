@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await response.json();
                 const cartId = data.userCartId;
 
-                const emptyCartResponse = await fetch(`/api/carts/${cartId}`, {
-                    method: "DELETE",
+                const emptyCartResponse = await fetch(`/api/carts/products/${cartId}`, {
+                    method: "PUT",
                     headers: {
                         "Content-Type": "application/json"
                     }
@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 } else {
                     const errorData = await emptyCartResponse.json();
                     console.error("Failed to process empty", errorData);
-                    alert(`Failed to process empty: ${errorData.message}`);
                 }
             } catch (error) {
                 console.error("Error:", error);

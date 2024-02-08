@@ -64,19 +64,31 @@ router.get("/admin", checkRole(['admin']), (req, res) => {
 })
 
 router.get("/myCart", checkRole(['user']), async (req, res) => {
-    const user = req.user;
-    const userCartId = user.carts[0];
+    try {
+        const user = req.user;
+        const userCartId = user.carts[0];
 
-    const userCart = await cartsService.getCartsById({ _id: userCartId });
+        const userCart = await cartsService.getCartsById({ _id: userCartId });
 
-    let totalAmount = 0;
-    userCart.products.forEach(product => {
-        totalAmount += product.product.price * product.quantity;
-    })
+        if (userCart && userCart.products) {
+            let totalAmount = 0;
+            userCart.products.forEach(product => {
+                totalAmount += product.product.price * product.quantity;
+            });
 
-    res.render('cart', { style: "index.css", userCart, totalAmount });
+            res.render('cart', { style: "index.css", userCart, totalAmount });
+        } else {
+            console.error("userCart or its products property is null or undefined");
 
-})
+            res.render('cart', { style: "index.css", userCart: null, totalAmount: 0 });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+
 
 router.get('/tickets/:id', getTicketById)
 
