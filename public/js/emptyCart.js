@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const data = await response.json();
                 const cartId = data.userCartId;
 
-                const emptyCartResponse = await fetch(`/api/carts/products/${cartId}`, {
+                const emptyCartResponse = await fetch(`/api/carts/empty/${cartId}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json"

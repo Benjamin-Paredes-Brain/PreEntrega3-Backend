@@ -1,17 +1,16 @@
 import { Router } from "express"
 import { getProducts, getProductsById, createProducts, updateProducts, deleteProducts } from "../controllers/products.controller.js"
-import {checkRole} from "../middlewares/checkRole.js"
 export const router = Router()
 
-router.get("/", checkRole(["admin"]), async (req, res) => {
+router.get("/", async (req, res) => {
     const productsData = await getProducts(req, res);
     res.json(productsData);
 });
 
-router.get("/:pid", checkRole(["admin"]), getProductsById);
+router.get("/:pid", getProductsById);
 
-router.post("/", checkRole(["admin"]), createProducts);
+router.post("/", createProducts);
 
-router.put("/:pid", checkRole(["admin"]), updateProducts)
+router.put("/:pid", updateProducts)
 
-router.delete("/:pid", checkRole(["admin"]), deleteProducts)
+router.delete("/:pid", deleteProducts)

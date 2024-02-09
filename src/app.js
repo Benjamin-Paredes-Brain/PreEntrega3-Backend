@@ -12,6 +12,9 @@ import { initializedPassport } from "./config/passport.config.js";
 import errorMiddleware from "./middlewares/error/error.middleware.js";
 import { middlewareLogger } from "./middlewares/logger/logger.middleware.js";
 
+import swaggerJsdoc from "swagger-jsdoc"
+import swaggerUiExpress from "swagger-ui-express"
+
 import { router as producstRouter } from "./routes/products.router.js"
 import { router as cartsRouter } from "./routes/carts.router.js"
 import { router as viewsRouter } from "./routes/views.router.js"
@@ -25,6 +28,20 @@ const { PORT, MongoURL, MongoSecret } = config
 const app = express()
 const httpServer = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))
 const socketServer = new Server(httpServer)
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Ecommerce API",
+      description: "APIrestful developed during the backend programming course at coderhouse"
+    }
+  },
+  apis: [`${process.cwd()}/src/docs/**/*.yaml`]
+}
+
+const specs= swaggerJsdoc(swaggerOptions)
+app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 
 app.use(express.urlencoded({ extended: true }))
