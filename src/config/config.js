@@ -8,5 +8,6 @@ export default {
     MongoSecret: process.env.MongoSecret,
     GithubClientId: process.env.GithubClientId,
     GithubClientSecret: process.env.GithubClientSecret,
-    ENV: process.env.ENV
+    ENV: process.env.ENV,
+    MongoTestURL: process.env.MongoTestURL
 }

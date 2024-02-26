@@ -1,5 +1,4 @@
 import Carts from "../dao/classes/carts.dao.js";
-import { productsModel } from "../dao/models/products.model.js";
 
 const cartsService = new Carts()
 
@@ -149,7 +148,6 @@ export const deleteAllProductsinCarts = async (req, res) => {
     }
 };
 
-
 export const updateQuantityProductsInCarts = async (req, res) => {
     try {
         let cid = req.params.cid;
@@ -176,38 +174,10 @@ export const purchaseCart = async (req, res) => {
     try {
         const cartId = req.params.cid;
 
-        const cart = await cartsService.getCartsById({ _id: cartId });
+        let result = await cartsService.purchaseCart(cartId)
 
-        if (!cart) {
-            return res.status(404).send({ status: "error", message: "Cart not found" });
-        }
-
-        for (const productInfo of cart.products) {
-            const productId = productInfo.product;
-            const quantityInCart = productInfo.quantity;
-            const productTitle = productInfo.product.title
-
-            const product = await productsModel.findById(productId);
-
-            if (!product) {
-                return res.status(404).send({ status: "error", message: `Product with ID ${productId} not found` });
-            }
-
-            if (product.stock >= quantityInCart) {
-                product.stock -= quantityInCart;
-                await product.save();
-            } else {
-                return res.status(400).send({
-                    status: "error",
-                    message: `Not enough stock for product "${productTitle}"`,
-                    product: product,
-                    cart: cart
-                });
-            }
-        }
-
-        return res.send({ status: "success", message: "Purchase completed successfully" });
+        return res.send({ status: "success", message: "Purchase completed successfully", payload: result});
     } catch (err) {
-        return res.status(500).send({ status: "error", message: "Server error", error: err });
+        return res.status(500).send({ status: "error", message: err.message});
     }
 };

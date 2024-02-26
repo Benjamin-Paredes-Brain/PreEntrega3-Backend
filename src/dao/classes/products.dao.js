@@ -40,7 +40,7 @@ export default class Products {
                 stock,
                 category
             });
-            this.logger.info(`Product "${title}" created successfully.`);
+            this.logger.info(`Product "${title}" created successfully with id ${result._id}.`);
             return result;
         } catch (error) {
             this.logger.error(`Error while creating product: ${error.message}`);

@@ -4,10 +4,7 @@ import {
     updateCarts, updateQuantityProductsInCarts, deleteAllProductsinCarts, purchaseCart
 } from "../controllers/carts.controller.js"
 
-import { checkRole } from "../middlewares/checkRole.js"
-
 export const router = Router()
-
 router.get("/", getCarts)
 router.get("/:cid", async (req, res) => {
     const cartData = await getCartsById(req, res);
@@ -20,7 +17,7 @@ router.put("/empty/:cid", deleteAllProductsinCarts)
 
 
 router.post("/", createCarts)
-router.post("/:cid/products/:pid",  checkRole(['user']), addProductToCarts)
+router.post("/:cid/products/:pid", addProductToCarts)
 router.post("/:cid", purchaseCart);
 
 

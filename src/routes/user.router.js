@@ -7,7 +7,8 @@ import { getUserCartId, getUserCart } from "../controllers/carts.controller.js";
 export const router = Router()
 
 router.post('/register', passport.authenticate('register', {
-    failureRedirect: '/failregister'
+    failureRedirect: '/failregister',
+    session: false
 }), async (req, res) => {
     res.send({ status: "success", message: "User registered" });
 })
@@ -63,7 +64,7 @@ router.post('/restartPassword', async (req, res) => {
     if (!user) return res.status(404).send({ status: "error", error: "Not user found" });
     const newHashedPassword = createHash(password);
     await userModel.updateOne({ _id: user._id }, { $set: { password: newHashedPassword } });
-    res.send({ status: "success", message: "Contraseña restaurada" });
+    res.send({ status: "success", message: "Password restarted" });
 })
 
 router.get("/cartId", getUserCartId)

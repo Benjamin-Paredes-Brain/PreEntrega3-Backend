@@ -1,4 +1,5 @@
 import { cartsModel } from "../models/carts.model.js";
+import { productsModel } from "../models/products.model.js";
 import { logger } from "../../middlewares/logger/logger.middleware.js";
 
 export default class Carts {
@@ -104,20 +105,18 @@ export default class Carts {
 
   deleteAllProductsinCarts = async (cid) => {
     try {
-        let result = await cartsModel.findByIdAndUpdate(
-            cid,
-            { $set: { products: [] } },
-            { new: true }
-        );
-        this.logger.info(`All products deleted from cart with ID ${cid}`);
-        return result;
+      let result = await cartsModel.findByIdAndUpdate(
+        cid,
+        { $set: { products: [] } },
+        { new: true }
+      );
+      this.logger.info(`All products deleted from cart with ID ${cid}`);
+      return result;
     } catch (error) {
-        this.logger.error(`Error while deleting all products from cart with ID ${cid}: ${error.message}`);
-        return null;
+      this.logger.error(`Error while deleting all products from cart with ID ${cid}: ${error.message}`);
+      return null;
     }
-}
-
-
+  }
 
   updateQuantityProductsInCarts = async (cid, pid, quantity) => {
     try {
@@ -139,4 +138,44 @@ export default class Carts {
       return null;
     }
   };
+
+  purchaseCart = async (cid) => {
+    try {
+      let cart = await this.getCartsById({ _id: cid })
+      if (!cart) {
+        this.logger.error("Cart not found");
+        return null
+      }
+
+      for (const productInfo of cart.products) {
+        const productId = productInfo.product;
+        const quantityInCart = productInfo.quantity;
+        const productTitle = productInfo.product.title
+
+        const product = await productsModel.findById(productId);
+
+        if (!product) {
+          return res.status(404).send({ status: "error", message: `Product with ID ${productId} not found` });
+        }
+
+        if (product.stock >= quantityInCart) {
+          product.stock -= quantityInCart;
+          await product.save();
+          this.logger.info(`Cart with id ${cid} was purchased successfully`)
+        } else {
+          return res.status(400).send({
+            status: "error",
+            message: `Not enough stock for product "${productTitle}"`,
+            product: product,
+            cart: cart
+          });
+        }
+      }
+      return cart;
+    }
+    catch (error) {
+      this.logger.error(`Error buying cart with id ${cid}: ${error.message}`);
+      return null;
+    }
+  }
 }

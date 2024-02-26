@@ -24,7 +24,7 @@ import { router as mockRouter } from "../src/routes/mocking.router.js"
 import { router as loggerRouter } from "./routes/logger.router.js";
 
 
-const { PORT, MongoURL, MongoSecret } = config
+const { PORT, MongoURL, MongoSecret, MongoTestURL } = config
 const app = express()
 const httpServer = app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))
 const socketServer = new Server(httpServer)
@@ -62,7 +62,7 @@ app.set("view engine", "handlebars")
 app.use(errorMiddleware)
 app.use(middlewareLogger)
 
-mongoose.connect(MongoURL)
+mongoose.connect(MongoTestURL)
   .then(() => {
     console.log("Connected to the database");
   })
@@ -73,7 +73,7 @@ mongoose.connect(MongoURL)
 
 app.use(session({
   store: MongoStore.create({
-    mongoUrl: MongoURL,
+    mongoUrl: MongoTestURL,
   }),
   secret: MongoSecret,
   resave: false,
